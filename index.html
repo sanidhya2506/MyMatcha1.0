@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyMatcha — Cozy BL Drama Recommender</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<style>
+:root{
+    --bg-start: #FFF0F6; /* Soft Pink */
+    --bg-end: #FFFFFF;   /* Pure White */
+    --card: #FFFFFF;     /* White cards */
+    --accent: #FF5B84;   /* Romantic Pink */
+    --text: #4A3C47;     /* Muted Dark Mauve */
+    --glass: rgba(255,255,255,0.6);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+    margin:0;
+    font-family:"Poppins",system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background: linear-gradient(160deg, var(--bg-start), var(--bg-end));
+    color: var(--text);
+}
+
+/* Floating bubbles - soft pink aura */
+.bg-bubble{position:fixed;border-radius:50%;filter:blur(36px);z-index:-1;opacity:0.5;animation: floatB 16s ease-in-out infinite;}
+.bg-bubble.b1{ width:260px;height:260px; left:6%; top:6%; background:rgba(255,91,132,0.3);}
+.bg-bubble.b2{ width:320px;height:320px; right:4%; bottom:6%; background:rgba(255,91,132,0.2); animation-duration:18s}
+.bg-bubble.b3{ width:180px;height:180px; left:30%; bottom:8%; background:rgba(255,182,193,0.4); animation-duration:20s}
+@keyframes floatB{0%{transform:translateY(0)}50%{transform:translateY(-30px)}100%{transform:translateY(0)}}
+
+.intro-text{ text-align:center; padding: 20px 5%; margin-top: 50px; }
+.intro-text h2{ font-size: 24px; color: var(--accent); margin-bottom: 10px; }
+.intro-text p{ font-size: 1rem; color: var(--text); line-height: 1.6; max-width: 800px; margin: 0 auto; }
+
+nav{
+    position:fixed; left:0;right:0;top:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 5%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,240,246,0.9));
+    backdrop-filter: blur(8px);
+    box-shadow:0 6px 18px rgba(255,91,132,0.08);
+    z-index:1000;
+    border-bottom-left-radius:10px; border-bottom-right-radius:10px;
+}
+.logo{ font-family:"Dancing Script", cursive; font-size:28px; color: var(--accent);}
+.navlinks{ display:flex; gap:18px; align-items:center; font-weight:600; color: var(--text);}
+.navlinks a{ color: var(--text); text-decoration:none; padding:6px 10px; border-radius:8px; transition:all .18s }
+.navlinks a:hover{ background:var(--glass); transform:translateY(-3px); color: var(--accent);}
+
+.hero{ min-height:88vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:22vh 6% 10vh;}
+.hero-card{
+    width:100%; max-width:980px;
+    background: var(--card);
+    border-radius:18px; padding:44px 34px;
+    box-shadow: 0 12px 40px rgba(255,91,132,0.1);
+    backdrop-filter: blur(6px);
+}
+.hero-title{
+    font-family:"Dancing Script", cursive;
+    font-size:clamp(32px,6vw,56px);
+    color: var(--accent);
+    margin-bottom:8px; line-height:1; letter-spacing:0.6px;
+    text-shadow: 0 2px 0 rgba(255,91,132,0.2);
+}
+.hero-sub{ color: var(--text); font-size:1.05rem; margin-bottom:18px; }
+.hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+
+.btn{
+    padding:10px 20px; border-radius:999px; border: none; cursor:pointer; font-weight:600;
+    box-shadow:0 8px 22px rgba(255,91,132,0.12); transition:transform .18s, box-shadow .18s;
+}
+.btn.primary{ background: linear-gradient(90deg, var(--accent), #FF99B7); color:white }
+.btn.ghost{ background:transparent; color: var(--text); border:1px solid rgba(255,91,132,0.2) }
+.btn.primary:hover{ transform:translateY(-4px); box-shadow:0 18px 36px rgba(255,91,132,0.3) }
+.btn.ghost:hover{ transform:translateY(-3px) }
+
+.section{ padding:48px 6%; }
+.section h3{ font-size:22px; color: var(--accent); margin-bottom:14px; text-align:center }
+
+.carousel-wrap{ overflow:hidden; position:relative; border-radius:14px; padding:14px 10px }
+.carousel{ display:flex; gap:16px; width: max-content; align-items:center; animation: slideLeft 36s linear infinite; }
+.poster{ width:170px; height:260px; border-radius:12px; overflow:hidden; box-shadow:0 10px 30px rgba(255,91,132,0.1); transform-origin:center; transition: transform .35s, box-shadow .35s; background: var(--card);}
+.poster img{ width:100%; height:100%; object-fit:cover; display:block }
+.poster:hover{ transform:translateY(-8px) scale(1.03); box-shadow:0 20px 50px rgba(255,91,132,0.25) }
+
+@keyframes slideLeft{ 0%{ transform: translateX(0) } 100%{ transform: translateX(-50%) } }
+
+.genres{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:20px 0 8px}
+.chip{
+    padding:8px 14px; border-radius:999px; background: rgba(255,255,255,0.9);
+    box-shadow: 0 6px 18px rgba(255,91,132,0.08); cursor:pointer; font-weight:600;
+    transition: transform .14s, box-shadow .14s, background .18s;
+}
+.chip.active{
+    background: var(--accent);
+    color: #fff;
+    transform:translateY(-3px);
+    box-shadow:0 18px 40px rgba(255,91,132,0.2)
+}
+
+.recommend-wrap{ display:flex; gap:12px; justify-content:center; align-items:center; margin-top:18px; flex-wrap:wrap}
+.input{
+    width:320px; max-width:75vw;
+    padding:12px 16px; border-radius:999px; border:none;
+    box-shadow:inset 0 2px 8px rgba(255,91,132,0.1); font-size:1rem;
+}
+.spinner{ width:42px; height:42px; border-radius:50%; border:4px solid rgba(0,0,0,0.06); border-left-color:var(--accent); animation:spin 0.9s linear infinite; display:none; margin:16px auto;}
+@keyframes spin{ to{ transform:rotate(360deg) } }
+
+#recommendResults ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+}
+#recommendResults ul li {
+    background: var(--card);
+    box-shadow: 0 6px 18px rgba(255,91,132,0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,91,132,0.2);
+    color: var(--text);
+    font-weight: 600;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#recommendResults ul li:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(255,91,132,0.25);
+}
+#genreResults {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.hero-bg {
+    background-image: url('https://i.pinimg.com/1200x/0d/e3/6d/0de36df43bdc376eb2faebe59c05fcad.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    min-height: 80vh;
+    width: 100%;
+    border-radius: 18px;
+    color: var(--text);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 5%;
+}
+.hero-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.35); /* soft white overlay */
+    border-radius: 18px;
+    z-index: 0;
+}
+
+.hero-bg .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.hero-bg h2 { font-size: clamp(28px, 4vw, 48px); margin-bottom: 20px; color: var(--accent); }
+.hero-bg p { font-size: 1rem; line-height: 1.6; margin-bottom: 30px; color: var(--text); }
+.hero-bg .hero-btn { padding: 12px 24px; font-size: 1rem; border-radius: 50px; text-decoration: none; display: inline-block; background: var(--accent); color: #fff; }
+
+.card-result{
+    background: var(--card);
+    padding:12px; border-radius:12px; box-shadow:0 10px 30px rgba(255,91,132,0.12);
+    overflow:hidden; text-decoration:none; color: var(--text); transition: transform .2s, box-shadow .2s; text-align: center;
+}
+.card-result:hover{ transform:translateY(-8px); box-shadow:0 24px 50px rgba(255,91,132,0.25) }
+.card-result img{ width:100%; height:260px; object-fit:contain; border-radius:8px; display:block }
+.card-info{ padding:10px 8px; text-align:center }
+.card-info h4{ margin:0; font-size:1.05rem; font-weight:700; color: var(--text); letter-spacing:0.2px }
+
+footer{ padding:28px 6%; text-align:center; font-size:0.95rem; color: var(--text); }
+
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,0.25); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; visibility:hidden; transition:opacity .18s, visibility .18s; z-index:1200}
+.modal.show{ opacity:1; visibility:visible }
+.modal-box{ background: var(--card); padding:20px 22px; border-radius:12px; box-shadow:0 18px 60px rgba(255,91,132,0.18); text-align:center; width:100%; max-width:420px }
+.modal-box p{ color: var(--text) }
+
+@media (max-width:820px){
+    .hero{ padding:18vh 6% 8vh }
+    .carousel{ animation-duration:28s }
+    .poster{ width:150px; height:230px }
+    .hero-card{ padding:26px }
+}
+@media (max-width:480px){
+    nav{ padding:12px 4% }
+    .hero-card{ padding:18px }
+    .poster{ width:130px; height:200px }
+    .hero-title{ font-size:30px }
+}
+
+
+footer {
+  background: linear-gradient(160deg, #fff0f6, #ffffff);
+  padding: 40px 6% 20px;
+  text-align: center;
+  border-top: 1px solid rgba(255,91,132,0.2);
+  margin-top: 40px;
+}
+
+.footer-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  font-family: "Dancing Script", cursive;
+  font-size: 28px;
+  color: var(--accent);
+  margin: 0;
+}
+
+.footer-tagline {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin: 6px 0 20px;
+}
+
+.footer-links {
+  margin-bottom: 18px;
+}
+.footer-links a {
+  margin: 0 10px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+.footer-socials {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.footer-socials a img {
+  width: 22px;
+  height: 22px;
+  filter: invert(30%) sepia(20%) saturate(600%) hue-rotate(300deg) brightness(90%) contrast(90%);
+  transition: transform 0.2s, filter 0.2s;
+}
+.footer-socials a:hover img {
+  transform: translateY(-3px) scale(1.1);
+  filter: invert(46%) sepia(80%) saturate(500%) hue-rotate(300deg) brightness(100%) contrast(95%);
+}
+
+.footer-copy {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
+.footer-made {
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 6px;
+}
+.footer-made i {
+  color: #ff5b84;   /* romantic pink */
+  margin: 0 4px;
+  animation: heartbeat 1.2s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+
+</style>
+
+
+</head>
+<body>
+
+<!-- Floating Bubbles -->
+<div class="bg-bubble b1"></div>
+<div class="bg-bubble b2"></div>
+<div class="bg-bubble b3"></div>
+
+<!-- Hero Section with Introduction -->
+<section class="intro-text hero-bg">
+    <div class="hero-content">
+        <h2>What is MyMatcha? 🍵</h2>
+        <p>
+            Your ultimate companion for finding the perfect cozy BL drama. 
+            We believe in the comfort of a good story, a warm cup of tea, 
+            and a drama that feels like a hug. Explore our curated list, get 
+            personalized recommendations, and discover your next favorite series!
+        </p>
+        <a href="#recommend" class="btn primary hero-btn">Explore More</a>
+    </div>
+</section>
+
+<!-- Navigation -->
+<nav>
+    <div class="logo">MyMatcha 🍵</div>
+    <div class="navlinks">
+        <a href="#recommend">Recommend</a>
+        <a href="#genres">Genres</a>
+        <a href="#carousel">Popular</a>
+    </div>
+</nav>
+
+<!-- Recommendation Section -->
+<section class="hero" id="recommend">
+    <div class="hero-card">
+        <h1 class="hero-title">Discover Your Cozy BL Dramas</h1>
+        <p class="hero-sub">
+            Get personalized recommendations with just one click and explore your favorite genres!
+        </p>
+        <div class="hero-ctas">
+            <input id="dramaInput" class="input" placeholder="Enter a drama you like..." aria-label="Drama title input">
+            <button class="btn primary" onclick="onSearch()">Recommend</button>
+        </div>
+        <div class="spinner" id="spinner"></div>
+        <div id="recommendResults" aria-live="polite"></div>
+    </div>
+</section>
+
+<!-- Genres Section -->
+<section class="section" id="genres">
+    <h3>Genres</h3>
+    <div class="genres" id="genreChips"></div>
+    <div id="genreResults"></div>
+</section>
+
+<!-- Popular Dramas Carousel -->
+<section class="section" id="carousel">
+    <h3>Popular Dramas</h3>
+    <div class="carousel-wrap">
+        <div class="carousel" id="posterCarousel"></div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer>
+    <div class="footer-container">
+        <h2 class="footer-logo">MyMatcha 🍵</h2>
+        <p class="footer-tagline">Your cozy BL drama recommender ✨</p>
+
+        <div class="footer-links">
+            <a href="#recommend">Recommend</a>
+            <a href="#genres">Genres</a>
+            <a href="#carousel">Popular</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <div class="footer-socials">
+            <a href="https://www.instagram.com/sanidhya.does?igsh=MTZ4czlxM254bHlnNw==">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram">
+            </a>
+            <a href="https://www.linkedin.com/in/sanidhya-sharma-22ba91237/">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/linkedin.svg" alt="LinkedIn">
+            </a>
+            <a href="https://github.com/sanidhya2506">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/github.svg" alt="GitHub">
+            </a>
+        </div>
+
+        <p class="footer-copy">&copy; 2025 MyMatcha. All rights reserved.</p>
+        <p class="footer-made">
+            Made with <i class="fa fa-heart"></i> by Sanidhya Sharma
+        </p>
+    </div>
+</footer>
+
+<!-- Modal for Empty Input -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+        <p id="modalTitle">Please enter a drama title so we can recommend something special ✨</p>
+        <div style="margin-top:14px">
+            <button class="btn primary" onclick="closeModal()">Okay</button>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: Add ARIA for better accessibility -->
+
+
+<script>
+const popularPosters = [
+    { name:"Big Dragon", genres:["Romance","School"], poster:"https://i.pinimg.com/736x/08/b5/8f/08b58f66fe69c1bb15d3b1058acf2a9f.jpg" },
+    { name:"TharnType", genres:["Wandee Goodday"], poster:"https://i.pinimg.com/736x/62/7d/5a/627d5ad5e8d1d4c6f362ea1d84529cda.jpg" },
+    { name:"Bed Friend", genres:["Romance","Drama"], poster:"https://i.pinimg.com/1200x/d6/52/72/d65272cf090302124fcae559b68512cd.jpg" },
+    { name:"Between Us", genres:["Comedy","Romance"], poster:"https://i.pinimg.com/1200x/3d/8e/08/3d8e08b81070edf2441f9bfe4dae9cf9.jpg" },
+    { name:"Jun and Jun", genres:["Drama","Romance"], poster:"https://i.pinimg.com/1200x/be/10/28/be10287fe6f9cb94801f2b6ab908b90a.jpg" },
+    { name:"Not Me", genres:["Romance","School"], poster:"https://i.pinimg.com/736x/eb/89/ee/eb89ee188cbc3f0c5ea4bf245d8b2a49.jpg" },
+    { name:"Love In The Air", genres:["Wandee Goodday"], poster:"https://i.pinimg.com/1200x/91/70/7b/91707ba61e135ae9b2a7ed23ea5ae50a.jpg" },
+    { name:"Lovely Writer", genres:["Romance","Drama"], poster:"https://i.pinimg.com/736x/cf/52/8a/cf528a6cbf43a8079d0009d157fcceef.jpg" },
+    { name:"Only Friends", genres:["Comedy","Romance"], poster:"https://i.pinimg.com/1200x/76/3b/0d/763b0d617b6a8787884256412e95a4ee.jpg" },
+    { name:"Playboyy", genres:["Drama","Romance"], poster:"https://i.pinimg.com/1200x/94/a9/d9/94a9d9703aeacc658c1747f46d66ac4a.jpg" }
+];
+
+const genrePosters = [
+    { name:"I Told Sunset About You", genres:["Romance","School"], poster:"https://i.pinimg.com/474x/5f/ec/b9/5fecb9cf83a6ca9997dae0992c2402ee.jpg" },
+    { name:"The Untamed", genres:["Fantasy","Drama"], poster:"https://i.pinimg.com/736x/fe/de/43/fede433f19569918306aadb32bcd1377.jpg" },
+    { name:"A Tale of a Thousand Stars", genres:["Romance","Drama"], poster:"https://i.pinimg.com/1200x/df/9d/7e/df9d7e24c06228ffa49bb459190e27c3.jpg" },
+    { name:"Love By Chance", genres:["Romance","School"], poster:"https://i.pinimg.com/1200x/4e/2f/3b/4e2f3b9abbd808b2e5f0788d20b94cc8.jpg" },
+    { name:"Light On Me", genres:["School","Romance"], poster:"https://i.pinimg.com/736x/cb/2d/f9/cb2df93f31d10fb984a90f2daee948e4.jpg" },
+    { name:"2gether", genres:["Romance","School"], poster:"https://i.pinimg.com/736x/c7/9c/db/c79cdbe0f70d7a9beaec216546c42589.jpg" },
+    { name:"TharnType", genres:["Romance"], poster:"https://i.pinimg.com/736x/67/14/32/671432df85353543f18b1fe25d1f44ce.jpg" },
+    { name:"Semantic Error", genres:["Romance","Drama"], poster:"https://i.pinimg.com/736x/11/2d/53/112d53ded0bf4a71d7b25fef2f3dba2d.jpg" },
+    { name:"Bad Buddy", genres:["Comedy","Romance"], poster:"https://i.pinimg.com/1200x/a7/a5/fc/a7a5fc56e005722c2f8d8620aa9c0342.jpg" },
+    { name:"KinnPorsche", genres:["Drama","Romance"], poster:"https://i.pinimg.com/1200x/b2/03/ac/b203acd043e6b732996cf7f4bb1576eb.jpg" },
+    { name:"Only Friends", genres:["Comedy","Romance","School"], poster:"https://i.pinimg.com/1200x/76/3b/0d/763b0d617b6a8787884256412e95a4ee.jpg" },
+    { name:"Playboyy", genres:[,"Romance","School"], poster:"https://i.pinimg.com/1200x/94/a9/d9/94a9d9703aeacc658c1747f46d66ac4a.jpg" }
+];
+const genresList = [...new Set([...genrePosters].flatMap(p => p.genres))].sort();
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Show popular posters only in carousel
+    const carousel = document.getElementById('posterCarousel');
+    popularPosters.forEach(p => carousel.appendChild(posterNode(p)));
+    popularPosters.forEach(p => carousel.appendChild(posterNode(p).cloneNode(true)));
+
+    // Create genre chips
+    const chips = document.getElementById('genreChips');
+    chips.appendChild(createChip('All', true));
+    genresList.forEach(g => chips.appendChild(createChip(g)));
+
+    filterByGenre('All');
+});
+
+function posterNode(p) {
+    const div = document.createElement('div');
+    div.className = 'poster';
+    div.title = p.name;
+    div.innerHTML = `<img loading="lazy" src="${p.poster}" alt="${p.name} poster">`;
+    return div;
+}
+
+function createChip(label, active = false) {
+    const c = document.createElement('div');
+    c.className = 'chip' + (active ? ' active' : '');
+    c.textContent = label;
+    c.onclick = () => {
+        document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+        document.getElementById('recommendResults').innerHTML = '';
+        filterByGenre(label);
+    };
+    return c;
+}
+
+function filterByGenre(g) {
+    const genreResults = document.getElementById('genreResults');
+    genreResults.innerHTML = '';
+
+    let list;
+    if (g === 'All') {
+        list = genrePosters; // Only show genre posters in genre section
+    } else {
+        list = genrePosters.filter(p => p.genres.map(x => x.toLowerCase()).includes(g.toLowerCase()));
+    }
+
+    if (list.length === 0) {
+        genreResults.innerHTML = '<p style="text-align: center;">No dramas found for this genre.</p>';
+        return;
+    }
+
+    list.forEach(p => {
+        const a = document.createElement('a');
+        a.className = 'card-result';
+        a.href = '#';
+        a.innerHTML = `
+            <img src="${p.poster}" alt="${escapeHtml(p.name)} poster">
+            <div class="card-info"><h4>${escapeHtml(p.name)}</h4></div>
+        `;
+        genreResults.appendChild(a);
+    });
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function onSearch() {
+    const query = document.getElementById('dramaInput').value.trim();
+    if (!query) { showModal(); return; }
+
+    const spinner = document.getElementById('spinner');
+    const recommendResults = document.getElementById('recommendResults');
+    recommendResults.innerHTML = '';
+    document.getElementById('genreResults').innerHTML = '';
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+
+    spinner.style.display = 'block';
+
+    let recommended = [];
+    try {
+        const resp = await fetch('/recommend', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query })
+        });
+        if (resp.ok) {
+            const j = await resp.json();
+            if (Array.isArray(j.recommendations) && j.recommendations.length > 0) {
+                recommended = j.recommendations.slice(0, 5);
+            }
+        }
+    } catch (e) { console.log('Backend error:', e); }
+
+    await new Promise(r => setTimeout(r, 400));
+    spinner.style.display = 'none';
+    renderNames(recommended);
+}
+
+function renderNames(items) {
+    const recommendResults = document.getElementById('recommendResults');
+    recommendResults.innerHTML = '';
+    if (items.length === 0) {
+        recommendResults.innerHTML = '<p style="text-align:center;">No recommendations found. Try a different title.</p>';
+        return;
+    }
+    const list = document.createElement('ul');
+    items.forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        list.appendChild(li);
+    });
+    recommendResults.appendChild(list);
+    recommendResults.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showModal() { document.getElementById('modal').classList.add('show'); }
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+document.getElementById('dramaInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') onSearch(); });
+</script>
+
+
+</body>
+</html>
